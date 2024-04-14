@@ -42,4 +42,27 @@ const sendMessage = async (req, res) => {
     }
 };
 
-module.exports = { sendMessage };
+
+const getConversation = async (req, res) => {
+    try {
+        const { id: targetId } = req.params;
+        const currentId = req.user._id;
+
+        const conversation = await Conversation.findOne({
+            participants: { $all: [targetId, currentId] }
+        }).populate("messages");
+
+        if (!conversation) {
+            return res.status(200).json([]);
+        }
+
+        res.status(200).json(conversation.messages);
+
+    } catch (error) {
+        console.log(`Error in sendMessage cont ${error.message}`);
+        res.status(500).json({ error: "Internal server error" });
+    }
+};
+
+
+module.exports = { sendMessage, getConversation };

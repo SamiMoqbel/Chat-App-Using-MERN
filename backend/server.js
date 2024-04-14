@@ -3,6 +3,7 @@ const app = express();
 const dotenv  = require("dotenv");
 const authRoutes = require("./routes/auth.routes");
 const messageRoutes = require("./routes/message.routes");
+const usersRoutes = require("./routes/users.routes");
 const cookieParser = require("cookie-parser");
 const connectToMongoDB = require("./db/connectToMongoDB");
 
@@ -18,6 +19,7 @@ app.use(cookieParser());
 
 app.use("/api/auth", authRoutes);
 app.use("/api/messages", messageRoutes);
+app.use("/api/users", usersRoutes);
 
 app.listen(PORT, () => { 
     connectToMongoDB();
