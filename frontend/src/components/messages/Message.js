@@ -1,18 +1,30 @@
-import React from 'react'
-
+import React from 'react';
+import { useAuthContext } from '../../context/AuthContext';
+import useConversation from '../../zustand/useConversation';
+import { extractTime } from '../../utils/extractTime';
 
 const Message = ({ message }) => {
+    const { authUser } = useAuthContext();
+    const { selectedConversation } = useConversation();
 
-	return (
-		<div className={`chat chat-end`}>
-			<div className='chat-image avatar'>
-				<div className='w-10 rounded-full'>
-					<img alt='Tailwind CSS chat bubble component' src="https://icons8.com/icon/23239/circled-user-female-skin-type-1-and-2"/>
-				</div>
-			</div>
-			<div className={`chat-bubble text-white pb-2`}>HIIIII</div>
-			<div className='chat-footer opacity-50 text-xs flex gap-1 items-center'>12:42</div>
-		</div>
-	);
+    const isCurrentUser = message.senderId === authUser._id;
+    const chatClass = isCurrentUser ? 'chat-end' : 'chat-start';
+    const profPic = isCurrentUser ? authUser.profilePic : selectedConversation.profilePic;
+    const chatColor = isCurrentUser ? 'bg-blue-500' : '';
+    const formattedTime = extractTime(message.createdAt);
+    const shouldShake = message.shouldShake ? 'shake' : '';
+
+    return (
+        <div className={`chat ${chatClass} `}>
+            <div className='chat-image avatar'>
+                <div className='w-10 rounded-full'>
+                    <img alt='Profile' src={profPic}/>
+                </div>
+            </div>
+            <div className={`chat-bubble ${chatColor} text-white pb-2 ${shouldShake}`}>{message.message}</div>
+            <div className='chat-footer opacity-50 text-xs flex gap-1 items-center pb-4'>{formattedTime}</div>
+        </div>
+    );
 };
+
 export default Message;
